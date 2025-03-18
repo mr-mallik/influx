@@ -1,0 +1,6 @@
+/.kaggle/
+/.venv/
+/credentials.md
+/influxd.exe
+/LICENSE
+/README.md
