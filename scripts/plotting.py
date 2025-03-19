@@ -41,7 +41,7 @@ class CyclePlotter:
         return time_pivot, normalized_pivot
 
     @staticmethod
-    def create_anomaly_plot(data: pd.DataFrame, threshold: float, property_name: str) -> Tuple[plt.Figure, pd.DataFrame]:
+    def create_anomaly_plot(data: pd.DataFrame, threshold: float, property_name: str, title: str) -> Tuple[plt.Figure, pd.DataFrame]:
         """Create plot with anomaly detection.
         
         Args:
@@ -54,23 +54,30 @@ class CyclePlotter:
         fig, ax = plt.subplots(figsize=(10, 6))
         anomalies_df = pd.DataFrame()
         
+        # Plot lines and collect anomaly points
+        anomaly_points_all = []
         for column in data.columns:
             ax.plot(data.index, data[column], label=column)
             
             anomalies = detect_anomalies(data[column], threshold)
             anomaly_points = data[column][anomalies]
-            ax.scatter(anomaly_points.index, anomaly_points.values, 
-                      color='red', s=50, label=f'{column} Anomalies')
+            anomaly_points_all.append((anomaly_points.index, anomaly_points.values))
 
             anomaly_data = pd.DataFrame({
-                'timestamp': anomaly_points.index,
-                'value': anomaly_points.values,
-                'cycle': column
+            'timestamp': anomaly_points.index,
+            'value': anomaly_points.values,
+            'cycle': column
             })
             anomalies_df = pd.concat([anomalies_df, anomaly_data]) if not anomalies_df.empty else anomaly_data
         
+        # Plot all anomalies with single legend entry
+        for idx, points in enumerate(anomaly_points_all):
+            label = 'Anomalies' if idx == 0 else None
+            ax.scatter(points[0], points[1], color='red', s=50, label=label)
+        
+        ax.set_title(title)
         ax.set_xlabel("Time")
         ax.set_ylabel(property_name)
-        ax.legend()
+        ax.legend(bbox_to_anchor=(0.5, -0.15), loc='upper center', ncol=4)
         
         return fig, anomalies_df

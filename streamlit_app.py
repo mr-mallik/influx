@@ -2,6 +2,8 @@ import streamlit as st
 import pandas as pd
 import datetime
 from scripts.plotting import CyclePlotter
+# from scripts.dashboardQuery import getCycleStarts
+# from scripts.dashboardQuery import getInfluxData
 
 # Page configuration
 st.set_page_config(page_title="Anomaly Detection", page_icon="📈")
@@ -40,13 +42,13 @@ if is_submitted:
         # Original timeline plots
         st.subheader("Original Timeline")
         st.line_chart(time_data, use_container_width=True)
-        fig, anomalies_df = plotter.create_anomaly_plot(time_data, threshold, property_name)
+        fig, anomalies_df = plotter.create_anomaly_plot(time_data, threshold, property_name, title=f"Original Timeline with Anomalies threshold={threshold}")
         st.pyplot(fig, use_container_width=True)
         
         # Time-shifted comparison plots
         st.subheader("Time-shifted Comparison")
         st.line_chart(normalized_data, use_container_width=True)
-        fig, normalized_anomalies = plotter.create_anomaly_plot(normalized_data, threshold, property_name)
+        fig, normalized_anomalies = plotter.create_anomaly_plot(normalized_data, threshold, property_name, title=f"Time-shifted Comparison with Anomalies threshold={threshold}")
         st.pyplot(fig, use_container_width=True)
 
         # Anomaly statistics
