@@ -4,3 +4,4 @@
 /influxd.exe
 /LICENSE
 /README.md
+__pycache__/
